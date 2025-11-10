@@ -37,6 +37,15 @@ quit
 
 python amb2gmx.py propanediol.prmtop propanediol.rst7
 
+#ifdef POSRES1
+
+[ dihedral_restraints ]
+
+9 35 32 24 1 360 0 10000
+35 9 23 2 1 -73.09035 0 10000
+
+#endif
+
 
 define = -DPOSRES
 integrator  = steep    
@@ -53,3 +62,6 @@ coulombtype     = Cutoff
 rcoulomb        = 1.0      
 rvdw            = 1.0     
 pbc             = xyz     
+
+
+
