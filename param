@@ -1,0 +1,1 @@
+antechamber -fi gout -i propane.log -fo mol2 -o propane.mol2 -at gaff2
