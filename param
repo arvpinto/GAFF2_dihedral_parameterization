@@ -39,8 +39,8 @@ python amb2gmx.py propanediol.prmtop propanediol.rst7
 
 #ifdef POSRES
 [ dihedral_restraints ]
-9 35 32 24 1 DIHE_VALUE 0 10000
-35 9 23 2 1 -73.09035 0 10000
+10 1 4 7 1 DIHE_VALUE 0 10000
+12 7 4 1 1 177.95895 0 10000
 #endif
 
 
