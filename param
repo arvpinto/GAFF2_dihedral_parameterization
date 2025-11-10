@@ -1,4 +1,4 @@
-antechamber -fi gout -i 1,3-propanediol.log -fo mol2 -o 1,3-propanediol.mol2 -at gaff2
+antechamber -fi gout -i 1,3-propanediol.log -fo mol2 -o 1,3-propanediol.mol2 -nc 0 -c gas -pf y -at gaff2
 
 python3 gaussian2xyz.py 1,3-propanediol_scan.log scan > scan_geoms.xyz
 
