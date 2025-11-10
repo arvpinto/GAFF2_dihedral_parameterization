@@ -2,8 +2,7 @@ python gaussian2xyz.py propanediol_scan.log scan > scan_geoms.xyz
 
 split -l 15 scan_geoms.xyz
 
-for i in x*; do (echo "#p M062X/6-311++G(d,p)" ; echo "" ; echo "SP" ; echo "" ; echo "0 1" ; tail -n +3 "$i" ; echo "") > "$i
-".com ; done
+for i in x*; do (echo "#p M062X/6-311++G(d,p)" ; echo "" ; echo "SP" ; echo "" ; echo "0 1" ; tail -n +3 "$i" ; echo "") > "$i".com ; done
 
 nohup $(for i in *com ; do g09 "$i" ; done) &
 
