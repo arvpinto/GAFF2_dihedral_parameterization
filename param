@@ -6,3 +6,5 @@ split -l 15 scan_geoms.xyz
 
 for i in x*; do (echo "#p B3LYP/cc-pVTZ" ; echo "" ; echo "SP" ; echo "" ; echo "0 1" ; tail -n +3 "$i" ; echo "") > "$i
 ".com ; done
+
+nohup $(for i in *com ; do g09 "$i" ; done) &
