@@ -9,6 +9,15 @@ mol = loadmol2 propanediol.mol2
 saveoff mol propanediol.lib
 quit
 
+source leaprc.gaff2
+loadamberparams propanediol.frcmod
+loadoff propanediol.lib
+loadamberprep propanediol.prepin
+mol = loadmol2 propanediol.mol2
+saveAmberParm mol propanediol.prmtop propanediol.rst7
+savepdb mol propanediol.pdb
+quit
+
 python3 gaussian2xyz.py propanediol_scan.log scan > scan_geoms.xyz
 
 split -l 15 scan_geoms.xyz
