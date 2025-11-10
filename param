@@ -37,6 +37,8 @@ quit
 
 python amb2gmx.py propanediol.prmtop propanediol.rst7
 
+gmx editconf -f propanediol_converted.gro -bt triclinic -d 1.0 -o propanediol_converted.gro
+
 #ifdef POSRES
 [ dihedral_restraints ]
 10 1 4 7 1 DIHE_VALUE 0 10000
