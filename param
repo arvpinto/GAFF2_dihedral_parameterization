@@ -1,3 +1,18 @@
+python gaussian2xyz.py propanediol_scan.log scan > scan_geoms.xyz
+
+split -l 15 scan_geoms.xyz
+
+for i in x*; do (echo "#p B3LYP/cc-pVTZ" ; echo "" ; echo "SP" ; echo "" ; echo "0 1" ; tail -n +3 "$i" ; echo "") > "$i
+".com ; done
+
+nohup $(for i in *com ; do g09 "$i" ; done) &
+
+for i in x*log; do grep "SCF Done" "$i" | awk '{print $5}' ; done
+
+python gaussian_dihedral.py 10 1 4 7 x*log > qm_scan.dat
+
+
+
 antechamber -fi gout -i propanediol.log -fo mol2 -o propanediol.mol2 -nc 0 -c abcg2 -pf y -at gaff2
 antechamber -fi mol2 -i propanediol.mol2 -fo ac -o propanediol.ac -pf y
 prepgen -i propanediol.ac -o propanediol.prepin
@@ -18,18 +33,9 @@ saveAmberParm mol propanediol.prmtop propanediol.rst7
 savepdb mol propanediol.pdb
 quit
 
-python3 gaussian2xyz.py propanediol_scan.log scan > scan_geoms.xyz
 
-split -l 15 scan_geoms.xyz
 
-for i in x*; do (echo "#p B3LYP/cc-pVTZ" ; echo "" ; echo "SP" ; echo "" ; echo "0 1" ; tail -n +3 "$i" ; echo "") > "$i
-".com ; done
-
-nohup $(for i in *com ; do g09 "$i" ; done) &
-
-for i in x*log; do grep "SCF Done" "$i" | awk '{print $5}' ; done
-
-python3 gaussian_dihedral.py 10 1 4 7 x*log > qm_scan.dat
+python amb2gmx.py propanediol.prmtop propanediol.rst7
 
 
 define = -DPOSRES
