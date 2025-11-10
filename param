@@ -63,4 +63,6 @@ rvdw            = 1.0
 pbc             = xyz     
 
 
+for i in $(tail -n +2 qm_scan.dat | awk '{print $1}'); do cp propanediol_converted.top propanediol_converted_dihe.top ; sed -i 's/DIHE_VALUE/'"$i"'/g' propanediol_converted_dihe.top ; gmx grompp -f min_steep.mdp -c propanediol_converted.gro -p propanediol_converted_dihe.top -o dihe_"$i".tpr ; gmx mdrun -deffnm dihe_"$i" ; done
+
 
