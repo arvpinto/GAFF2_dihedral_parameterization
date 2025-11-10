@@ -3,3 +3,5 @@ antechamber -fi gout -i propane.log -fo mol2 -o propane.mol2 -at gaff2
 python3 gaussian2xyz.py 1,3-propanediol_scan.log scan > scan_geoms.xyz
 
 split -l 15 scan_geoms.xyz
+
+for i in x*; do (echo "#p B3LYP/cc-pVTZ" ; echo "" ; echo "SP" ; echo "" ; cat "$i" ; echo "") > "$i".com ; done
