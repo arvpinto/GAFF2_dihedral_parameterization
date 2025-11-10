@@ -30,3 +30,20 @@ nohup $(for i in *com ; do g09 "$i" ; done) &
 for i in x*log; do grep "SCF Done" "$i" | awk '{print $5}' ; done
 
 python3 gaussian_dihedral.py 10 1 4 7 x*log > qm_scan.dat
+
+
+define = -DPOSRES
+integrator  = steep    
+emtol       = 10.0     
+emstep      = 0.0001      
+nsteps      = 50000        
+
+nstxout = 0
+nstxout-compressed = 100
+nstlist         = 1      
+cutoff-scheme   = Verlet   
+ns_type         = grid    
+coulombtype     = Cutoff   
+rcoulomb        = 1.0      
+rvdw            = 1.0     
+pbc             = xyz     
