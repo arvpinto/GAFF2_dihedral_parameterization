@@ -1,9 +1,15 @@
-antechamber -fi gout -i 1,3-propanediol.log -fo mol2 -o 1,3-propanediol.mol2 -nc 0 -c abcg2 -pf y -at gaff2
-antechamber -fi mol2 -i 1,3-propanediol.mol2 -fo ac -o 1,3-propanediol.ac -pf y
-prepgen -i 1,3-propanediol.ac -o 1,3-propanediol.prepin
-parmchk2 -i 1,3-propanediol.prepin -f mol2 -o 1,3-propanediol.frcmod -s gaff2
+antechamber -fi gout -i propanediol.log -fo mol2 -o propanediol.mol2 -nc 0 -c abcg2 -pf y -at gaff2
+antechamber -fi mol2 -i propanediol.mol2 -fo ac -o propanediol.ac -pf y
+prepgen -i propanediol.ac -o propanediol.prepin
+parmchk2 -i propanediol.prepin -f mol2 -o propanediol.frcmod -s gaff2
 
-python3 gaussian2xyz.py 1,3-propanediol_scan.log scan > scan_geoms.xyz
+source leaprc.gaff2
+loadamberprep propanediol.prepin
+mol = loadmol2 propanediol.mol2
+saveoff mol propanediol.lib
+quit
+
+python3 gaussian2xyz.py propanediol_scan.log scan > scan_geoms.xyz
 
 split -l 15 scan_geoms.xyz
 
