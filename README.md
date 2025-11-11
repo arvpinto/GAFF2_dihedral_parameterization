@@ -1,7 +1,7 @@
 <p align="justify"><b>This tutorial explains how to reparameterize molecular mechanics (MM) dihedral angles using a quantum mechanical (QM) approach.</b></p>
 
 <p align="justify">
-It requires Gaussian, GROMACS and a recent version of AmberTools.
+It requires Gaussian, GROMACS, a recent version of AmberTools and parmed.
 </p>
 
 ---
@@ -122,7 +122,8 @@ for i in $(tail -n +2 qm_scan.dat | awk '{print $1}'); do
 done
 </pre>
 
-This will result in a dihedral energy profile with the dihedral term that we aim to parameterize included, however we need to calculate the energy profile without this dihedral term (see https://pubs.acs.org/doi/10.1021/acs.jpca.0c10845). This can be done by deleting the term from the topology file and running single-point calculations on the previously produced structures with the min_steep_sp.mdp <a href="https://arvpinto.github.io/3D_clustering_PCA/pca_dbscan_gmm.py" target="_blank">pca_dbscan_gmm.py</a> file:
+<p align="justify">This will result in a dihedral energy profile with the dihedral term that we aim to parameterize included, however we need to calculate the energy profile without this dihedral term (see https://pubs.acs.org/doi/10.1021/acs.jpca.0c10845). This can be done by deleting the term from the topology file and running single-point calculations on the previously produced structures with the min_steep_sp.mdp <a href="https://arvpinto.github.io/3D_clustering_PCA/pca_dbscan_gmm.py" target="_blank">pca_dbscan_gmm.py</a> file:
+</p>
 <pre style="color: white; background-color: black;">
 for i in dihe_*gro; do 
    gmx grompp -f min_steep_sp.mdp -c "$i" -p propanediol_converted.top -o "$(echo "$i" | sed 's/\.gro//')".tpr 
@@ -154,10 +155,50 @@ Terms (multiplicity, K[kJ/mol], phase_deg):
   n= 3    K=  0.289076 kJ/mol    phase=  96.7451 deg
 ...
 </pre>
-Here we use --nmax 3 instead of 1 to improve the fitting to the QM profile.
 
-Finally, we can replace the term in the original topology and re-run the MM single-point calculations with this term included to see if the fit adequately leads to the reproduction of the QM torsional profile:
-
+<p align="justify">Finally, we can replace the terms in the original topology and re-run the MM single-point calculations to see if the fit adequately leads to the reproduction of the QM torsional profile. Here we use --nmax 3 instead of 1 to improve the fitting to the QM profile, however, this has to be chosen carefully to avoid overfitting. 
+</p>
 <div align="center">
     <img src="dihedral_qm_mm_corr.png">
 </div>
+
+<br/>
+<h2> <p align="center"> <b>IV - Add dihedral parameters to topology </b> </p></h2>
+
+<p align="justify">The dihedral parameters are usually derived from a molecular fragment chosen to represent larger molecules in a complex topology. In this section, we'll delete the original dihedral parameters and add the new ones using parmed. 
+</p>
+
+We start by building our complex system, by replicating the 1,3-propanediol cell and parameterizing it:
+<pre style="color: white; background-color: black;">
+echo -e "box x 5 y 5 z 5 alpha 90 beta 90 gamma 90 \n replicatecell out propanediol_system.mol2 all " | cpptraj propanediol.mol2 -y propanediol.mol2
+
+tleap
+>source leaprc.gaff2
+>loadamberparams propanediol.frcmod
+>loadoff propanediol.lib
+>loadamberprep propanediol.prepin
+>mol = loadmol2 propanediol_system.mol2
+>saveAmberParm mol propanediol_system.prmtop propanediol_system.rst7
+>quit
+</pre>
+
+Now we print the list of dihedral angles equivalent to the one we parameterized previously:
+<pre style="color: white; background-color: black;">
+echo "printDihedrals @O1 @C1 @C2 @C3" | parmed propanediol_system.prmtop | grep "oh" | awk '{print $1,$5,$9,$13}' | sed -E 's/([0-9]+)/@\1/g' > dihedral_list.dat
+</pre>
+
+And we create the parmed input file to replace the parameters (don't forget to convert the parameters from kJ/mol to kcal/mol):
+<pre style="color: white; background-color: black;">
+touch dihedrals_parmed.in
+while read line; do
+  echo "deleteDihedral $line" >> dihedrals_parmed.in
+done < dihedral_list.dat
+while read line; do
+  echo "addDihedral $line 4.604625 1 70.7828" >> dihedrals_parmed.in
+  echo "addDihedral $line 1.353402 2 -12.2563" >> dihedrals_parmed.in
+  echo "addDihedral $line 0.289076 3 96.7451" >> dihedrals_parmed.in
+done < dihedral_list.dat
+echo "parmout propanediol_system_newdihe.prmtop" >> dihedrals_parmed.in
+ 
+parmed propanediol_system.prmtop -i dihedrals_parmed.in
+</pre>
