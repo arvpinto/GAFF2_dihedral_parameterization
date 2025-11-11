@@ -63,7 +63,7 @@ python gaussian_dihedral.py 10 1 4 7 x*log > qm_scan.dat
 </pre>
 
 <div align="center">
-    <img src="kernel_density_plot.png">
+    <img src="dihedral_m062x.png">
 </div>
 
 Note, while the dihedral angle scan is carried out with a lower level of theory, the single-point calculations should be carried out with an adequate method such as MP2/cc-pVTZ. Here we use M062X/6-311++G(d,p) to exemplify.
@@ -137,7 +137,7 @@ python3 gromacs_dihedral.py dihe_*log
 </pre>
 
 <div align="center">
-    <img src="kernel_density_plot.png">
+    <img src="dihedral_qm_mm.png">
 </div>
 
 <br/>
@@ -151,3 +151,6 @@ Here we use --nmax 3 instead of 1 to improve the fitting to the QM profile.
 
 Finally, we can replace the term in the original topology and re-run the MM single-point calculations with this term included to see if the fit adequately leads to the reproduction of the QM torsional profile:
 
+<div align="center">
+    <img src="dihedral_qm_mm_corr.png">
+</div>
