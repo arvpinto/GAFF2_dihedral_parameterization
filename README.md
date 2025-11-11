@@ -145,9 +145,9 @@ python3 gromacs_dihedral.py dihe_*log
 
 Now we can use the least_squares_fit.py script to fit Fourier (cos/sin) series to the target dihedral energy profile:
 <pre style="color: white; background-color: black;">
-python fit_dihedral_gromacs.py --qm qm_scan.dat --mm mm_scan.dat --out dihedral.itp --nmax 1 --refine
+python least_squares_fit.py --qm qm_scan.dat --mm mm_scan.dat --out dihedral.itp --nmax 3 --refine
 </pre>
-Here we only have one term associated with the dihedral, so we use --nmax 1.
+Here we use --nmax 3 instead of 1 to improve the fitting to the QM profile.
 
 Finally, we can replace the term in the original topology and re-run the MM single-point calculations with this term included to see if the fit adequately leads to the reproduction of the QM torsional profile:
 
