@@ -146,12 +146,6 @@ system          3
       8      7     12     13     1  0.0000000  0.4727920  3
       9      7     12     13     1  0.0000000  0.4727920  3
 
-#ifdef POSRES
-[ dihedral_restraints ]
-10 1 4 7 1 DIHE_VALUE 0 10000
-12 7 4 1 1 177.95895 0 10000
-#endif
-
 [ system ]
 ; Name
 Generic title
