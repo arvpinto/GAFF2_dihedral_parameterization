@@ -37,19 +37,33 @@ Title Card Required
 
 </pre>
 
-Here we use the 1,3-propanediol molecule as an example, scanning the 10 1 4 7 dihedral while keeping the 12 7 4 1 dihedral frozen to avoid energy jumps. Note that the initial geometry of the scan should correspond to a global minimum in the potential energy surface.
+Here we use the 1,3-propanediol molecule as an example, scanning the 10 1 4 7 dihedral while keeping the 12 7 4 1 dihedral frozen to avoid energy jumps. Note that the initial geometry of the scan should correspond to a global minimum in the potential energy surface. If possible, use a higher level of theory.
 
 <br/>
 
-Then we extract the PCA vectors from the corrected trajectory:
+Then we extract the optimized geometries from the Gaussian scan output using the gaussian2xyz.py script (authored by Tomasz Borowski and Zuzanna Wojdyła) and run single-point calculations with a high level of theory:
 
 <pre style="color: white; background-color: black;">
-# Covariance analysis to extract the eigenvectors from the cMD trajectory.
-echo 27 27 | gmx covar -f trajectory_fit.xtc -s ref.gro -n act.ndx -ascii -v eigenvec.trr -last 3 
+#The script generates the scan_geoms.xyz file which has all the coordinates and corresponding energies
+python gaussian2xyz.py propanediol_scan.log scan > scan_geoms.xyz
 
-# Print the resulting PCA vectors to a pdb file.
-echo 27 27 | gmx anaeig -f trajectory_fit.xtc -s ref.gro -n act.ndx -v eigenvec.trr -3d pc.pdb -last 3 
+#We split the file to create individual coordinate files
+split -l 15 scan_geoms.xyz
+
+#Using a for loop, we create new Gaussian input files, which will be used for single-point calculations
+for i in x*; do 
+   (echo "#p M062X/6-311++G(d,p)" ; echo "" ; echo "SP" ; echo "" ; echo "0 1" ; tail -n +3 "$i" ; echo "") > "$i".com 
+done
+
+#And we run the calculations in the background:
+nohup $(for i in *com ; do g09 "$i" ; done) &
+
+#Finally we can use the gaussian_dihedral.py script to extract the energy profile for dihedral rotation:
+python gaussian_dihedral.py 10 1 4 7 x*log > qm_scan.dat
 </pre>
+
+Note, while the dihedral angle scan is carried out with a lower level of theory, the single-point calculations should be carried out with an adequate method such as MP2/cc-pVTZ. Here we use M062X/6-311++G(d,p) to exemplify.
+
 <br/>
 
 Clean up the pc.pdb file to include only the PCA vectors:
