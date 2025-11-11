@@ -1,0 +1,109 @@
+deleteDihedral @10 @1 @4 @7
+deleteDihedral @20 @17 @14 @23
+deleteDihedral @33 @30 @27 @36
+deleteDihedral @46 @43 @40 @49
+deleteDihedral @59 @56 @53 @62
+deleteDihedral @72 @69 @66 @75
+deleteDihedral @85 @82 @79 @88
+deleteDihedral @98 @95 @92 @101
+deleteDihedral @111 @108 @105 @114
+deleteDihedral @124 @121 @118 @127
+deleteDihedral @137 @134 @131 @140
+deleteDihedral @150 @147 @144 @153
+deleteDihedral @163 @160 @157 @166
+deleteDihedral @176 @173 @170 @179
+deleteDihedral @189 @186 @183 @192
+deleteDihedral @202 @199 @196 @205
+deleteDihedral @215 @212 @209 @218
+deleteDihedral @228 @225 @222 @231
+deleteDihedral @241 @238 @235 @244
+deleteDihedral @254 @251 @248 @257
+deleteDihedral @267 @264 @261 @270
+deleteDihedral @280 @277 @274 @283
+deleteDihedral @293 @290 @287 @296
+deleteDihedral @306 @303 @300 @309
+deleteDihedral @319 @316 @313 @322
+deleteDihedral @332 @329 @326 @335
+deleteDihedral @345 @342 @339 @348
+addDihedral @10 @1 @4 @7 4.604625 1 70.7828
+addDihedral @10 @1 @4 @7 1.353402 2 -12.2563
+addDihedral @10 @1 @4 @7 0.289076 3 96.7451
+addDihedral @20 @17 @14 @23 4.604625 1 70.7828
+addDihedral @20 @17 @14 @23 1.353402 2 -12.2563
+addDihedral @20 @17 @14 @23 0.289076 3 96.7451
+addDihedral @33 @30 @27 @36 4.604625 1 70.7828
+addDihedral @33 @30 @27 @36 1.353402 2 -12.2563
+addDihedral @33 @30 @27 @36 0.289076 3 96.7451
+addDihedral @46 @43 @40 @49 4.604625 1 70.7828
+addDihedral @46 @43 @40 @49 1.353402 2 -12.2563
+addDihedral @46 @43 @40 @49 0.289076 3 96.7451
+addDihedral @59 @56 @53 @62 4.604625 1 70.7828
+addDihedral @59 @56 @53 @62 1.353402 2 -12.2563
+addDihedral @59 @56 @53 @62 0.289076 3 96.7451
+addDihedral @72 @69 @66 @75 4.604625 1 70.7828
+addDihedral @72 @69 @66 @75 1.353402 2 -12.2563
+addDihedral @72 @69 @66 @75 0.289076 3 96.7451
+addDihedral @85 @82 @79 @88 4.604625 1 70.7828
+addDihedral @85 @82 @79 @88 1.353402 2 -12.2563
+addDihedral @85 @82 @79 @88 0.289076 3 96.7451
+addDihedral @98 @95 @92 @101 4.604625 1 70.7828
+addDihedral @98 @95 @92 @101 1.353402 2 -12.2563
+addDihedral @98 @95 @92 @101 0.289076 3 96.7451
+addDihedral @111 @108 @105 @114 4.604625 1 70.7828
+addDihedral @111 @108 @105 @114 1.353402 2 -12.2563
+addDihedral @111 @108 @105 @114 0.289076 3 96.7451
+addDihedral @124 @121 @118 @127 4.604625 1 70.7828
+addDihedral @124 @121 @118 @127 1.353402 2 -12.2563
+addDihedral @124 @121 @118 @127 0.289076 3 96.7451
+addDihedral @137 @134 @131 @140 4.604625 1 70.7828
+addDihedral @137 @134 @131 @140 1.353402 2 -12.2563
+addDihedral @137 @134 @131 @140 0.289076 3 96.7451
+addDihedral @150 @147 @144 @153 4.604625 1 70.7828
+addDihedral @150 @147 @144 @153 1.353402 2 -12.2563
+addDihedral @150 @147 @144 @153 0.289076 3 96.7451
+addDihedral @163 @160 @157 @166 4.604625 1 70.7828
+addDihedral @163 @160 @157 @166 1.353402 2 -12.2563
+addDihedral @163 @160 @157 @166 0.289076 3 96.7451
+addDihedral @176 @173 @170 @179 4.604625 1 70.7828
+addDihedral @176 @173 @170 @179 1.353402 2 -12.2563
+addDihedral @176 @173 @170 @179 0.289076 3 96.7451
+addDihedral @189 @186 @183 @192 4.604625 1 70.7828
+addDihedral @189 @186 @183 @192 1.353402 2 -12.2563
+addDihedral @189 @186 @183 @192 0.289076 3 96.7451
+addDihedral @202 @199 @196 @205 4.604625 1 70.7828
+addDihedral @202 @199 @196 @205 1.353402 2 -12.2563
+addDihedral @202 @199 @196 @205 0.289076 3 96.7451
+addDihedral @215 @212 @209 @218 4.604625 1 70.7828
+addDihedral @215 @212 @209 @218 1.353402 2 -12.2563
+addDihedral @215 @212 @209 @218 0.289076 3 96.7451
+addDihedral @228 @225 @222 @231 4.604625 1 70.7828
+addDihedral @228 @225 @222 @231 1.353402 2 -12.2563
+addDihedral @228 @225 @222 @231 0.289076 3 96.7451
+addDihedral @241 @238 @235 @244 4.604625 1 70.7828
+addDihedral @241 @238 @235 @244 1.353402 2 -12.2563
+addDihedral @241 @238 @235 @244 0.289076 3 96.7451
+addDihedral @254 @251 @248 @257 4.604625 1 70.7828
+addDihedral @254 @251 @248 @257 1.353402 2 -12.2563
+addDihedral @254 @251 @248 @257 0.289076 3 96.7451
+addDihedral @267 @264 @261 @270 4.604625 1 70.7828
+addDihedral @267 @264 @261 @270 1.353402 2 -12.2563
+addDihedral @267 @264 @261 @270 0.289076 3 96.7451
+addDihedral @280 @277 @274 @283 4.604625 1 70.7828
+addDihedral @280 @277 @274 @283 1.353402 2 -12.2563
+addDihedral @280 @277 @274 @283 0.289076 3 96.7451
+addDihedral @293 @290 @287 @296 4.604625 1 70.7828
+addDihedral @293 @290 @287 @296 1.353402 2 -12.2563
+addDihedral @293 @290 @287 @296 0.289076 3 96.7451
+addDihedral @306 @303 @300 @309 4.604625 1 70.7828
+addDihedral @306 @303 @300 @309 1.353402 2 -12.2563
+addDihedral @306 @303 @300 @309 0.289076 3 96.7451
+addDihedral @319 @316 @313 @322 4.604625 1 70.7828
+addDihedral @319 @316 @313 @322 1.353402 2 -12.2563
+addDihedral @319 @316 @313 @322 0.289076 3 96.7451
+addDihedral @332 @329 @326 @335 4.604625 1 70.7828
+addDihedral @332 @329 @326 @335 1.353402 2 -12.2563
+addDihedral @332 @329 @326 @335 0.289076 3 96.7451
+addDihedral @345 @342 @339 @348 4.604625 1 70.7828
+addDihedral @345 @342 @339 @348 1.353402 2 -12.2563
+addDihedral @345 @342 @339 @348 0.289076 3 96.7451
+parmout propanediol_system_newdihe.prmtop
