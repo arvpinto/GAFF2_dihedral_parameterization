@@ -94,7 +94,6 @@ tleap
 >loadamberprep propanediol.prepin
 >mol = loadmol2 propanediol.mol2
 >saveAmberParm mol propanediol.prmtop propanediol.rst7
->savepdb mol propanediol.pdb
 >quit
 </pre>
 
