@@ -65,6 +65,6 @@ pbc             = xyz
 
 for i in $(tail -n +2 qm_scan.dat | awk '{print $1}'); do cp propanediol_converted.top propanediol_converted_dihe.top ; sed -i 's/DIHE_VALUE/'"$i"'/g' propanediol_converted_dihe.top ; gmx grompp -f min_steep.mdp -c propanediol_converted.gro -p propanediol_converted_dihe.top -o dihe_"$i".tpr ; gmx mdrun -deffnm dihe_"$i" ; done
 
-for i in dihe_*gro; do gmx grompp -f min_steep.mdp -c "$i" -p propanediol_converted.top -o "$(echo "$i" | sed 's/\.log//')".tpr ; gmx mdrun -deffnm "$(echo "$i" | sed 's/\.log//')" ; done
+for i in dihe_*gro; do gmx grompp -f min_steep.mdp -c "$i" -p propanediol_converted.top -o "$(echo "$i" | sed 's/\.gro//')".tpr ; gmx mdrun -deffnm "$(echo "$i" | sed 's/\.gro//')" ; done
 
 python3 gromacs_dihedral.py dihe_*log
