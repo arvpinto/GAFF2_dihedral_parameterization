@@ -79,3 +79,18 @@ mol = loadmol2 propanediol.mol2
 saveAmberParm mol propanediol.prmtop propanediol.rst7
 savepdb mol propanediol.pdb
 quit
+
+
+echo "printDihedrals @O1 @C1 @C2 @C3" | parmed testi.prmtop | grep "oh" | awk '{print $1,$5,$9,$13}' | sed -E 's/([0-9]+)/@\1/g' > dihedral_list.dat
+
+touch dihedrals_parmed.in
+while read line; do
+  echo "deleteDihedral $line" >> dihedrals_parmed.in
+done < dihedral_list.dat
+while read line; do
+  echo "addDihedral $line 0.262273422562142 1 70.6125" >> dihedrals_parmed.in
+done < dihedral_list.dat
+echo "parmout POLYOL_DIHEDRALS.prmtop" >> dihedrals_parmed.in
+
+parmed testi.prmtop -i dihedrals_parmed.in
+
