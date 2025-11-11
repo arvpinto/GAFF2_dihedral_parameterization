@@ -41,7 +41,7 @@ Here we use the 1,3-propanediol molecule as an example, scanning the 10 1 4 7 di
 
 <br/>
 
-Then we extract the optimized geometries from the Gaussian scan output using the gaussian2xyz.py script (authored by Tomasz Borowski and Zuzanna Wojdyła) and run single-point calculations with a high level of theory:
+Then we extract the optimized geometries from the Gaussian scan output using the gaussian2xyz.py <a href="https://arvpinto.github.io/3D_clustering_PCA/pca_dbscan_gmm.py" target="_blank">pca_dbscan_gmm.py</a> script (authored by Tomasz Borowski and Zuzanna Wojdyła) and run single-point calculations with a high level of theory:
 
 <pre style="color: white; background-color: black;">
 #The script generates the scan_geoms.xyz file which has all the coordinates and corresponding energies
@@ -58,7 +58,7 @@ done
 #And we run the calculations in the background:
 nohup $(for i in *com ; do g09 "$i" ; done) &
 
-#Finally we can use the gaussian_dihedral.py script to extract the energy profile for dihedral rotation:
+#Finally we can use the gaussian_dihedral.py <a href="https://arvpinto.github.io/3D_clustering_PCA/pca_dbscan_gmm.py" target="_blank">pca_dbscan_gmm.py</a> script to extract the energy profile for dihedral rotation:
 python gaussian_dihedral.py 10 1 4 7 x*log > qm_scan.dat
 </pre>
 
@@ -69,22 +69,71 @@ python gaussian_dihedral.py 10 1 4 7 x*log > qm_scan.dat
 Note, while the dihedral angle scan is carried out with a lower level of theory, the single-point calculations should be carried out with an adequate method such as MP2/cc-pVTZ. Here we use M062X/6-311++G(d,p) to exemplify.
 
 <br/>
+<h2> <p align="center"> <b>II - Dihedral angle scan with MM </b> </p></h2>
 
-Clean up the pc.pdb file to include only the PCA vectors:
+<br/>
+
+To perform an MM dihedral scan, the molecule is first parameterized with GAFF2:
 <pre style="color: white; background-color: black;">
-cat pc.pdb | head -n -2 | tail -n +6 | awk '{print $6,$7,$8}' > temp && mv temp pc.pdb
+antechamber -fi gout -i propanediol.log -fo mol2 -o propanediol.mol2 -nc 0 -c abcg2 -pf y -at gaff2
+antechamber -fi mol2 -i propanediol.mol2 -fo ac -o propanediol.ac -pf y
+prepgen -i propanediol.ac -o propanediol.prepin
+parmchk2 -i propanediol.prepin -f mol2 -o propanediol.frcmod -s gaff2
+
+tleap
+>source leaprc.gaff2
+>loadamberprep propanediol.prepin
+>mol = loadmol2 propanediol.mol2
+>saveoff mol propanediol.lib
+>quit
+
+tleap
+>source leaprc.gaff2
+>loadamberparams propanediol.frcmod
+>loadoff propanediol.lib
+>loadamberprep propanediol.prepin
+>mol = loadmol2 propanediol.mol2
+>saveAmberParm mol propanediol.prmtop propanediol.rst7
+>savepdb mol propanediol.pdb
+>quit
 </pre>
 
-<br/>
-<h2> <p align="center"> <b>II - Clustering of PCA vectors and identification of representative frames</b> </p></h2>
-
-<br/>
-
-Now we run the <a href="https://arvpinto.github.io/3D_clustering_PCA/pca_dbscan_gmm.py" target="_blank">pca_dbscan_gmm.py</a> script to obtain the clusters and the representative frames.
-The <a href="https://arvpinto.github.io/3D_clustering_PCA/pca_dbscan_gmm.py" target="_blank">pca_dbscan_gmm.py</a> script has the following usage:
-
+Then the coordinates and parameters are converted to GROMACS format:
 <pre style="color: white; background-color: black;">
-python pca_dbscan_gmm.py &lt;data_file&gt; &lt;eps&gt; &lt;min_samples&gt; &lt;n_components&gt;
+python amb2gmx.py propanediol.prmtop propanediol.rst7
+gmx editconf -f propanediol_converted.gro -bt triclinic -d 1.0 -o propanediol_converted.gro
+</pre>
+
+To carry out the dihedral scan, we introduce the following section in the topology after the parameters:
+<pre style="color: white; background-color: black;">
+#ifdef POSRES
+[ dihedral_restraints ]
+10 1 4 7 1 DIHE_VALUE 0 10000
+12 7 4 1 1 177.95895 0 10000
+#endif
+</pre>
+
+And then we run the calculations with the min_steep_restr.mdp <a href="https://arvpinto.github.io/3D_clustering_PCA/pca_dbscan_gmm.py" target="_blank">pca_dbscan_gmm.py</a> file:
+<pre style="color: white; background-color: black;">
+for i in $(tail -n +2 qm_scan.dat | awk '{print $1}'); do 
+    cp propanediol_converted.top propanediol_converted_dihe.top 
+    sed -i 's/DIHE_VALUE/'"$i"'/g' propanediol_converted_dihe.top 
+    gmx grompp -f min_steep.mdp -c propanediol_converted.gro -p propanediol_converted_dihe.top -o dihe_"$i".tpr 
+    gmx mdrun -deffnm dihe_"$i"  
+done
+</pre>
+
+This will result in a dihedral energy profile with the dihedral term that we aim to parameterize included, however we need to calculate the energy profile without this dihedral term (see https://pubs.acs.org/doi/10.1021/acs.jpca.0c10845). This can be done by deleting the term from the topology file and running single-point calculations on the previously produced structures with the min_steep_sp.mdp <a href="https://arvpinto.github.io/3D_clustering_PCA/pca_dbscan_gmm.py" target="_blank">pca_dbscan_gmm.py</a> file:
+<pre style="color: white; background-color: black;">
+for i in dihe_*gro; do 
+   gmx grompp -f min_steep_sp.mdp -c "$i" -p propanediol_converted.top -o "$(echo "$i" | sed 's/\.gro//')".tpr 
+   gmx mdrun -deffnm "$(echo "$i" | sed 's/\.gro//')" 
+done
+</pre>
+
+Then the zero-torsion energy profile can be extracted with the gromacs_dihedral.py <a href="https://arvpinto.github.io/3D_clustering_PCA/pca_dbscan_gmm.py" target="_blank">pca_dbscan_gmm.py</a> script:
+<pre style="color: white; background-color: black;">
+python3 gromacs_dihedral.py dihe_*log
 </pre>
 
 <p align="justify">The &lt;data_file&gt; should be the processed pc.pdb file, &lt;eps&gt; and &lt;min_samples&gt; define the parameters for outlier identification using the DBSCAN method, and &lt;n_components&gt; defines the number of clusters in the Gaussian Mixture Models clustering. The script produces a 3D plot of the PCA vectors, where the outliers are represented as black markers, the frames closest to the highest density points as white markers, and each cluster displays a different color. Additionally, the density distribution curves of each cluster are plotted against each PCA vector, with markers representing the identified frames.
@@ -92,55 +141,4 @@ Initially try different &lt;eps&gt; and &lt;min_samples&gt; values to see which 
 Once you have an adequate number of outliers, try different &lt;n_components&gt; values to identify which number of clusters is more suitable.
 Also take a look at the kernel density plots to see if the density distributions have a regular shape, and the identified frames lie close to highest density points. </p>
 <br/>
-
-<pre style="color: white; background-color: black;">
-Number of DBSCAN outliers: 29
-Total number of clusters (GMM): 4
-Cluster 0: 595 frames
-Top 5 closest frames for Cluster 0: [ 578  721  681  647 1544]
-Cluster 1: 1198 frames
-Top 5 closest frames for Cluster 1: [1232 1380 1293 1919 1708]
-Cluster 2: 463 frames
-Top 5 closest frames for Cluster 2: [114  69  68  64  67]
-Cluster 3: 215 frames
-Top 5 closest frames for Cluster 3: [2015 2076 2050 2052 2054]
-</pre>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-    <iframe src="https://arvpinto.github.io/3D_clustering_PCA/3d_plot.html" width="1904" height="894"></iframe>
-</div>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-<div align="center">
-    <img src="kernel_density_plot.png">
-</div>
-
-A clusters.csv file is outputed with the cluster numbers that each frame corresponds to (outliers belong in the -1 cluster).
-A frames.dat is ouputed with the top 5 frames that are closest to the highest density point of each cluster.
-
-<br>
-<h2> <p align="center"> <b>III - Frame extraction</b> </p></h2>
-
-<br/>
-
-Use the <a href="https://arvpinto.github.io/3D_clustering_PCA/extract_highdens.py" target="_blank">extract_highdens.py</a> script to extract the identified frames from the trajectory.
-The <a href="https://arvpinto.github.io/3D_clustering_PCA/extract_highdens.py" target="_blank">extract_highdens.py</a> script usage follows:
-
-<pre style="color: white; background-color: black;">
-python extract_highdens.py &lt;xtc_file&gt; &lt;gro_file&gt; &lt;cluster_indices_file&gt; &lt;output_prefix&gt;
-</pre>
-
-
-
-
 
