@@ -1,0 +1,11 @@
+; Fitted up to n=3, RMSD=0.928483 kJ/mol
+; Dihedral terms produced by fit_dihedral_gromacs.py
+; Format (human): multiplicity   K_n[kJ/mol]   phase[deg]   (GROMACS form: K_n*(1+cos(n*phi - phase)))
+[ dihedraltypes ]
+;  multiplicity   K_n   phase_deg
+  1        4.604625       70.7828
+  2        1.353402      -12.2563
+  3        0.289076       96.7451
+
+; Constant offset (C0) fitted:
+; C0 = -8.294765 kJ/mol (this is an overall energy shift, GROMACS dihedral functional form adds +K_n constants for each term)
