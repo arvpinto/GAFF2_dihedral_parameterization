@@ -145,6 +145,14 @@ python3 gromacs_dihedral.py dihe_*log
 Now we can use the least_squares_fit.py script to fit Fourier (cos/sin) series to the target dihedral energy profile:
 <pre style="color: white; background-color: black;">
 python least_squares_fit.py --qm qm_scan.dat --mm mm_scan.dat --out dihedral.itp --nmax 3 --refine
+
+...
+Fitted up to n=3, RMSD=0.928483 kJ/mol
+Terms (multiplicity, K[kJ/mol], phase_deg):
+  n= 1    K=  4.604625 kJ/mol    phase=  70.7828 deg
+  n= 2    K=  1.353402 kJ/mol    phase= -12.2563 deg
+  n= 3    K=  0.289076 kJ/mol    phase=  96.7451 deg
+...
 </pre>
 Here we use --nmax 3 instead of 1 to improve the fitting to the QM profile.
 
