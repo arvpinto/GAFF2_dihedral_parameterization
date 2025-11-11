@@ -136,9 +136,18 @@ Then the zero-torsion energy profile can be extracted with the gromacs_dihedral.
 python3 gromacs_dihedral.py dihe_*log
 </pre>
 
-<p align="justify">The &lt;data_file&gt; should be the processed pc.pdb file, &lt;eps&gt; and &lt;min_samples&gt; define the parameters for outlier identification using the DBSCAN method, and &lt;n_components&gt; defines the number of clusters in the Gaussian Mixture Models clustering. The script produces a 3D plot of the PCA vectors, where the outliers are represented as black markers, the frames closest to the highest density points as white markers, and each cluster displays a different color. Additionally, the density distribution curves of each cluster are plotted against each PCA vector, with markers representing the identified frames.
-Initially try different &lt;eps&gt; and &lt;min_samples&gt; values to see which and how many frames are being identified as outliers.
-Once you have an adequate number of outliers, try different &lt;n_components&gt; values to identify which number of clusters is more suitable.
-Also take a look at the kernel density plots to see if the density distributions have a regular shape, and the identified frames lie close to highest density points. </p>
+<div align="center">
+    <img src="kernel_density_plot.png">
+</div>
+
 <br/>
+<h2> <p align="center"> <b>III - Fitting the dihedral energy term </b> </p></h2>
+
+Now we can use the least_squares_fit.py script to fit Fourier (cos/sin) series to the target dihedral energy profile:
+<pre style="color: white; background-color: black;">
+python fit_dihedral_gromacs.py --qm qm_scan.dat --mm mm_scan.dat --out dihedral.itp --nmax 1 --refine
+</pre>
+Here we only have one term associated with the dihedral, so we use --nmax 1.
+
+Finally, we can replace the term in the original topology and re-run the MM single-point calculations with this term included to see if the fit adequately leads to the reproduction of the QM torsional profile:
 
