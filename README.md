@@ -62,6 +62,10 @@ nohup $(for i in *com ; do g09 "$i" ; done) &
 python gaussian_dihedral.py 10 1 4 7 x*log > qm_scan.dat
 </pre>
 
+<div align="center">
+    <img src="kernel_density_plot.png">
+</div>
+
 Note, while the dihedral angle scan is carried out with a lower level of theory, the single-point calculations should be carried out with an adequate method such as MP2/cc-pVTZ. Here we use M062X/6-311++G(d,p) to exemplify.
 
 <br/>
