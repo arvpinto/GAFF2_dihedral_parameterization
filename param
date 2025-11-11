@@ -68,3 +68,14 @@ for i in $(tail -n +2 qm_scan.dat | awk '{print $1}'); do cp propanediol_convert
 for i in dihe_*gro; do gmx grompp -f min_steep.mdp -c "$i" -p propanediol_converted.top -o "$(echo "$i" | sed 's/\.gro//')".tpr ; gmx mdrun -deffnm "$(echo "$i" | sed 's/\.gro//')" ; done
 
 python3 gromacs_dihedral.py dihe_*log
+
+echo -e "box x 5 y 5 z 5 alpha 90 beta 90 gamma 90 \n replicatecell out testi.mol2 all " | cpptraj propanediol.mol2 -y propanediol.mol2
+
+source leaprc.gaff2
+loadamberparams propanediol.frcmod
+loadoff propanediol.lib
+loadamberprep propanediol.prepin
+mol = loadmol2 propanediol.mol2
+saveAmberParm mol propanediol.prmtop propanediol.rst7
+savepdb mol propanediol.pdb
+quit
