@@ -147,6 +147,7 @@ python3 gromacs_dihedral.py dihe_*log
 <br/>
 <h2> <p align="center"> <b>III - Fitting the dihedral energy term </b> </p></h2>
 
+<br/>
 <p align="justify">
 Now we can use the <a href="https://arvpinto.github.io/GAFF2_dihedral_parameterization/dihedral_fit/least_squares_fit.py" target="_blank">least_squares_fit.py</a> script to fit Fourier (cos/sin) series to the target dihedral energy profile:
 </p>
@@ -171,6 +172,7 @@ Terms (multiplicity, K[kJ/mol], phase_deg):
 <br/>
 <h2> <p align="center"> <b>IV - Add dihedral parameters to topology </b> </p></h2>
 
+<br/>
 <p align="justify">The dihedral parameters are usually derived from a molecular fragment chosen to represent larger molecules in a complex topology. In this section, we'll delete the original dihedral parameters and add the new ones using parmed. 
 </p>
 
