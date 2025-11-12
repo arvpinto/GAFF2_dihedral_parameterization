@@ -174,7 +174,9 @@ Terms (multiplicity, K[kJ/mol], phase_deg):
 <p align="justify">The dihedral parameters are usually derived from a molecular fragment chosen to represent larger molecules in a complex topology. In this section, we'll delete the original dihedral parameters and add the new ones using parmed. 
 </p>
 
+<p align="justify">
 We start by building our complex system, by replicating the 1,3-propanediol cell and parameterizing it:
+</p>
 <pre style="color: white; background-color: black;">
 echo -e "box x 5 y 5 z 5 alpha 90 beta 90 gamma 90 \n replicatecell out propanediol_system.mol2 all " | cpptraj propanediol.mol2 -y propanediol.mol2
 
@@ -188,12 +190,16 @@ tleap
 >quit
 </pre>
 
+<p align="justify">
 Now we print the list of dihedral angles equivalent to the one we parameterized previously:
+</p>
 <pre style="color: white; background-color: black;">
 echo "printDihedrals @O1 @C1 @C2 @C3" | parmed propanediol_system.prmtop | grep "oh" | awk '{print $1,$5,$9,$13}' | sed -E 's/([0-9]+)/@\1/g' > dihedral_list.dat
 </pre>
 
+<p align="justify">
 And we create the parmed input file to replace the parameters (don't forget to convert the parameters from kJ/mol to kcal/mol):
+</p>
 <pre style="color: white; background-color: black;">
 touch dihedrals_parmed.in
 while read line; do
