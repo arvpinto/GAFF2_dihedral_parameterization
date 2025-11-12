@@ -41,7 +41,7 @@ Here we use the 1,3-propanediol molecule as an example, scanning the 10 1 4 7 di
 
 <br/>
 
-Then we extract the optimized geometries from the Gaussian scan output using the gaussian2xyz.py <a href="https://arvpinto.github.io/3D_clustering_PCA/pca_dbscan_gmm.py" target="_blank">pca_dbscan_gmm.py</a> script (authored by Tomasz Borowski and Zuzanna Wojdyła) and run single-point calculations with a high level of theory:
+Then we extract the optimized geometries from the Gaussian scan output using the <a href="https://arvpinto.github.io/GAFF2_dihedral_parameterization/scan_qm/gaussian2xyz.py" target="_blank">gaussian2xyz.py</a> script (authored by Tomasz Borowski and Zuzanna Wojdyła) and run single-point calculations with a high level of theory:
 
 <pre style="color: white; background-color: black;">
 #The script generates the scan_geoms.xyz file which has all the coordinates and corresponding energies
@@ -58,7 +58,7 @@ done
 #And we run the calculations in the background:
 nohup $(for i in *com ; do g09 "$i" ; done) &
 
-#Finally we can use the gaussian_dihedral.py <a href="https://arvpinto.github.io/3D_clustering_PCA/pca_dbscan_gmm.py" target="_blank">pca_dbscan_gmm.py</a> script to extract the energy profile for dihedral rotation:
+#Finally we can use the <a href="https://arvpinto.github.io/GAFF2_dihedral_parameterization/scan_qm/single_point/gaussian_dihedral.py" target="_blank">gaussian_dihedral.py</a> script to extract the energy profile for dihedral rotation:
 python gaussian_dihedral.py 10 1 4 7 x*log > qm_scan.dat
 </pre>
 
@@ -112,7 +112,7 @@ To carry out the dihedral scan, we introduce the following section in the topolo
 #endif
 </pre>
 
-And then we run the calculations with the min_steep_restr.mdp <a href="https://arvpinto.github.io/3D_clustering_PCA/pca_dbscan_gmm.py" target="_blank">pca_dbscan_gmm.py</a> file:
+And then we run the calculations with the <a href="https://arvpinto.github.io/GAFF2_dihedral_parameterization/scan_mm/min_steep_restr.mdp" target="_blank">min_steep_restr.mdp</a> file:
 <pre style="color: white; background-color: black;">
 for i in $(tail -n +2 qm_scan.dat | awk '{print $1}'); do 
     cp propanediol_converted.top propanediol_converted_dihe.top 
@@ -122,7 +122,7 @@ for i in $(tail -n +2 qm_scan.dat | awk '{print $1}'); do
 done
 </pre>
 
-<p align="justify">This will result in a dihedral energy profile with the dihedral term that we aim to parameterize included, however we need to calculate the energy profile without this dihedral term (see https://pubs.acs.org/doi/10.1021/acs.jpca.0c10845). This can be done by deleting the term from the topology file and running single-point calculations on the previously produced structures with the min_steep_sp.mdp <a href="https://arvpinto.github.io/3D_clustering_PCA/pca_dbscan_gmm.py" target="_blank">pca_dbscan_gmm.py</a> file:
+<p align="justify">This will result in a dihedral energy profile with the dihedral term that we aim to parameterize included, however we need to calculate the energy profile without this dihedral term (see https://pubs.acs.org/doi/10.1021/acs.jpca.0c10845). This can be done by deleting the term from the topology file and running single-point calculations on the previously produced structures with the <a href="https://arvpinto.github.io/GAFF2_dihedral_parameterization/scan_mm/single_point/min_steep_sp.mdp" target="_blank">min_steep_sp.mdp</a> file:
 </p>
 <pre style="color: white; background-color: black;">
 for i in dihe_*gro; do 
@@ -131,7 +131,7 @@ for i in dihe_*gro; do
 done
 </pre>
 
-Then the zero-torsion energy profile can be extracted with the gromacs_dihedral.py <a href="https://arvpinto.github.io/3D_clustering_PCA/pca_dbscan_gmm.py" target="_blank">pca_dbscan_gmm.py</a> script:
+Then the zero-torsion energy profile can be extracted with the <a href="https://arvpinto.github.io/GAFF2_dihedral_parameterization/scan_mm/single_point/gromacs_dihedral.py" target="_blank">gromacs_dihedral.py</a> script:
 <pre style="color: white; background-color: black;">
 python3 gromacs_dihedral.py dihe_*log
 </pre>
@@ -143,7 +143,7 @@ python3 gromacs_dihedral.py dihe_*log
 <br/>
 <h2> <p align="center"> <b>III - Fitting the dihedral energy term </b> </p></h2>
 
-Now we can use the least_squares_fit.py script to fit Fourier (cos/sin) series to the target dihedral energy profile:
+Now we can use the <a href="https://arvpinto.github.io/GAFF2_dihedral_parameterization/dihedral_fit/least_squares_fit.py" target="_blank">least_squares_fit.py</a> script to fit Fourier (cos/sin) series to the target dihedral energy profile:
 <pre style="color: white; background-color: black;">
 python least_squares_fit.py --qm qm_scan.dat --mm mm_scan.dat --out dihedral.itp --nmax 3 --refine
 
