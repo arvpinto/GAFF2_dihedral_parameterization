@@ -10,8 +10,9 @@ It requires Gaussian, GROMACS, a recent version of AmberTools and parmed.
 <h2> <p align="center"> <b>I - Dihedral angle scan with QM </b> </p></h2>
 
 <br/>
-
+<p align="justify">
 We start by creating our molecule in GaussView and performing a dihedral scan using the ModRedundant input section: 
+</p>
 <pre style="color: white; background-color: black;">
 # opt=modredundant b3lyp/6-31g(d,p) scf=tight
 
@@ -37,12 +38,14 @@ Title Card Required
 
 </pre>
 
+<p align="justify">
 Here we use the 1,3-propanediol molecule as an example, scanning the 10 1 4 7 dihedral while keeping the 12 7 4 1 dihedral frozen to avoid energy jumps. Note that the initial geometry of the scan should correspond to a global minimum in the potential energy surface. If possible, use a higher level of theory.
-
+</p>
 <br/>
 
+<p align="justify">
 Then we extract the optimized geometries from the Gaussian scan output using the <a href="https://arvpinto.github.io/GAFF2_dihedral_parameterization/scan_qm/gaussian2xyz.py" target="_blank">gaussian2xyz.py</a> script (authored by Tomasz Borowski and Zuzanna Wojdyła) and run single-point calculations with a high level of theory:
-
+</p>
 <pre style="color: white; background-color: black;">
 #The script generates the scan_geoms.xyz file which has all the coordinates and corresponding energies
 python gaussian2xyz.py propanediol_scan.log scan > scan_geoms.xyz
@@ -66,8 +69,9 @@ python gaussian_dihedral.py 10 1 4 7 x*log > qm_scan.dat
     <img src="dihedral_m062x.png">
 </div>
 
+<p align="justify">
 Note, while the dihedral angle scan is carried out with a lower level of theory, the single-point calculations should be carried out with an adequate method such as MP2/cc-pVTZ. Here we use M062X/6-311++G(d,p) to exemplify.
-
+</p>
 <br/>
 <h2> <p align="center"> <b>II - Dihedral angle scan with MM </b> </p></h2>
 
@@ -122,7 +126,7 @@ for i in $(tail -n +2 qm_scan.dat | awk '{print $1}'); do
 done
 </pre>
 
-<p align="justify">This will result in a dihedral energy profile with the dihedral term that we aim to parameterize included, however we need to calculate the energy profile without this dihedral term (see https://pubs.acs.org/doi/10.1021/acs.jpca.0c10845). This can be done by deleting the term from the topology file and running single-point calculations on the previously produced structures with the <a href="https://arvpinto.github.io/GAFF2_dihedral_parameterization/scan_mm/single_point/min_steep_sp.mdp" target="_blank">min_steep_sp.mdp</a> file:
+<p align="justify">This will result in a dihedral energy profile with the dihedral term that we aim to parameterize included, however we need to calculate the energy profile without this dihedral term (see <a href="https://pubs.acs.org/doi/10.1021/acs.jpca.0c10845" target="_blank">https://pubs.acs.org/doi/10.1021/acs.jpca.0c10845</a>). This can be done by deleting the term from the topology file and running single-point calculations on the previously produced structures with the <a href="https://arvpinto.github.io/GAFF2_dihedral_parameterization/scan_mm/single_point/min_steep_sp.mdp" target="_blank">min_steep_sp.mdp</a> file:
 </p>
 <pre style="color: white; background-color: black;">
 for i in dihe_*gro; do 
@@ -143,7 +147,9 @@ python3 gromacs_dihedral.py dihe_*log
 <br/>
 <h2> <p align="center"> <b>III - Fitting the dihedral energy term </b> </p></h2>
 
+<p align="justify">
 Now we can use the <a href="https://arvpinto.github.io/GAFF2_dihedral_parameterization/dihedral_fit/least_squares_fit.py" target="_blank">least_squares_fit.py</a> script to fit Fourier (cos/sin) series to the target dihedral energy profile:
+</p>
 <pre style="color: white; background-color: black;">
 python least_squares_fit.py --qm qm_scan.dat --mm mm_scan.dat --out dihedral.itp --nmax 3 --refine
 
