@@ -1,6 +1,31 @@
 title: Parameterization of a Dihedral Angle with QM
-show_downloads: true
-google_analytics:
-remote_theme: pages-themes/cayman@v0.2.0
+description: Refit the GAFF2 parameters of a dihedral angle against a quantum mechanical torsion scan, using 1,3-propanediol as the example, and add them to the topology.
+author: Alexandre V. Pinto
+lang: en
+image: /assets/img/DIHEDRAL_ANGLE.png
+
+# Shown at the top of the main page of the tutorial. "hero" is the image next to the title.
+# The original (assets/img/DIHEDRAL_ANGLE.png) has black axes on a transparent
+# background, so the page uses a copy with the axes and labels in light grey.
+topic: Force fields
+topic_color: "#ff7d45"
+tools: [Gaussian, AmberTools, parmed, GROMACS]
+hero:
+  src: /assets/img/DIHEDRAL_ANGLE-dark-1000.webp
+  src_small: /assets/img/DIHEDRAL_ANGLE-dark-600.webp
+  small_width: 600
+  width: 1000
+  height: 767
+  alt: Torsion energy profile of 1,3-propanediol from -180 to 180 degrees, with the molecule and the rotated bond
+
+# This tutorial is a single page, so there is no "sections" list: the menu on the
+# left shows the parts of the page (I to IV) instead. It is not part of a series,
+# so there are no previous_tutorial / next_tutorial links either.
+
+# Main site (CompBioChem Tutorials) and this repository.
+home_url: https://arvpinto.github.io/
+repo_url: https://github.com/arvpinto/GAFF2_dihedral_parameterization
+
+# The page uses its own layout and stylesheet (no remote theme), matching the main site.
 plugins:
-- jekyll-remote-theme
+  - jekyll-seo-tag
