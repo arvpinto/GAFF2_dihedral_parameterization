@@ -4,28 +4,45 @@ author: Alexandre V. Pinto
 lang: en
 image: /assets/img/DIHEDRAL_ANGLE.png
 
-# Shown at the top of the main page of the tutorial. "hero" is the image next to the title.
+# Shown at the top of the page. "hero" is the image next to the title.
 # The original (assets/img/DIHEDRAL_ANGLE.png) has black axes on a transparent
-# background, so the page uses a copy with the axes and labels in light grey.
+# background: dark mode uses a copy with the axes and labels in light grey
+# (src), and light mode a copy of the original cut to the same frame (src_light).
+# The topic name and colour are the ones this
+# entry has on the home page (arvpinto.github.io, _data/categories.yml).
 topic: Force fields
 topic_color: "#ff7d45"
 tools: [Gaussian, AmberTools, parmed, GROMACS]
 hero:
   src: /assets/img/DIHEDRAL_ANGLE-dark-1000.webp
   src_small: /assets/img/DIHEDRAL_ANGLE-dark-600.webp
+  src_light: /assets/img/DIHEDRAL_ANGLE-light-1000.webp
+  src_light_small: /assets/img/DIHEDRAL_ANGLE-light-600.webp
   small_width: 600
   width: 1000
   height: 767
   alt: Torsion energy profile of 1,3-propanediol from -180 to 180 degrees, with the molecule and the rotated bond
 
-# This tutorial is a single page, so there is no "sections" list: the menu on the
-# left shows the parts of the page (I to IV) instead. It is not part of a series,
-# so there are no previous_tutorial / next_tutorial links either.
+# A single page, so there is no "sections" list: the menu on the left shows the
+# parts of the page (I to IV) instead. It is not part of a series, so there are
+# no previous_entry / next_entry links either.
 
-# Main site (CompBioChem Tutorials) and this repository.
+# Home page (the menu bar links to its Portfolio and About sections) and this repository.
 home_url: https://arvpinto.github.io/
+home_label: Portfolio
 repo_url: https://github.com/arvpinto/GAFF2_dihedral_parameterization
 
-# The page uses its own layout and stylesheet (no remote theme), matching the main site.
+# Name and affiliation shown under the title (same lines as on the home page).
+author_degree: PhD in Chemistry
+affiliation:
+  - High Performance Computing in Molecular Modelling Research Group, LAQV-REQUIMTE
+  - Department of Chemistry and Biochemistry, Faculty of Sciences, University of Porto
+
+# Licence named in the footer (the LICENSE file of the repository).
+license:
+  name: CC0 1.0 Universal
+  url: https://github.com/arvpinto/GAFF2_dihedral_parameterization/blob/main/LICENSE
+
+# The page uses its own layout and stylesheet (no remote theme), matching the home page.
 plugins:
   - jekyll-seo-tag
