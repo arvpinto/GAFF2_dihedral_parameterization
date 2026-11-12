@@ -10,7 +10,7 @@ Everything shown below is in the repository, including the scan output, the sing
 
 | Script | What it does |
 | --- | --- |
-| [gaussian_scan_geoms.py](https://arvpinto.github.io/GAFF2_dihedral_parameterization/scan_qm/gaussian_scan_geoms.py) | Pulls the optimised geometries out of a Gaussian relaxed scan and writes the single-point inputs |
+| [gaussian_scan_geoms.py](https://arvpinto.github.io/GAFF2_dihedral_parameterization/scan_qm/gaussian_scan_geoms.py) | Pulls the optimised geometries out of a Gaussian relaxed scan and writes the single-point inputs and the GROMACS structures |
 | [gaussian_dihedral.py](https://arvpinto.github.io/GAFF2_dihedral_parameterization/scan_qm/single_point/gaussian_dihedral.py) | Builds the QM profile from a set of Gaussian outputs |
 | [amb2gmx.py](https://arvpinto.github.io/GAFF2_dihedral_parameterization/scan_mm/amb2gmx.py) | Converts the AMBER topology and coordinates to GROMACS format |
 | [gromacs_dihedral.py](https://arvpinto.github.io/GAFF2_dihedral_parameterization/scan_mm/single_point/gromacs_dihedral.py) | Builds the MM profile from a set of GROMACS single-point runs |
@@ -176,15 +176,25 @@ To drive the torsion in GROMACS, a restraint section is added to the topology af
 </pre>
 
 <p align="justify">
-Each point is then minimised with its torsion held in place, using <a href="https://arvpinto.github.io/GAFF2_dihedral_parameterization/scan_mm/min_steep_restr.mdp" target="_blank">min_steep_restr.mdp</a>, which switches the block on with <code>define = -DDIHRES</code>:
+Each point is then minimised with its torsion held in place, using <a href="https://arvpinto.github.io/GAFF2_dihedral_parameterization/scan_mm/min_steep_restr.mdp" target="_blank">min_steep_restr.mdp</a>, which switches the block on with <code>define = -DDIHRES</code>. Each minimisation starts from the QM geometry of that point rather than from a common structure, which is what keeps the two profiles describing the same conformer, so the starting structures are written out first:
 </p>
 <pre style="color: white; background-color: black;">
-for i in $(grep -v '^#' qm_scan.dat | awk '{print $1}' | sort -g -u); do
-    sed 's/DIHE_VALUE/'"$i"'/g' propanediol_converted.top > propanediol_converted_dihe.top
-    gmx grompp -f min_steep_restr.mdp -c propanediol_converted.gro -p propanediol_converted_dihe.top -o dihe_"$i".tpr
-    gmx mdrun -deffnm dihe_"$i"
+# one .gro per scan point, named after the dihedral it holds
+python gaussian_scan_geoms.py propanediol_scan.log --drop-last \
+    --write-gro --gro-template propanediol_converted.gro --dihedral 10 1 4 7 \
+    --gro-prefix qm --outdir .
+
+for g in qm_*.gro; do
+    i=$(basename "$g" .gro | sed 's/^qm_//')
+    sed 's/DIHE_VALUE/'"$i"'/g' propanediol_converted.top > dihe.top
+    gmx grompp -f min_steep_restr.mdp -c "$g" -p dihe.top -o min_"$i".tpr
+    gmx mdrun -deffnm min_"$i" -c dihe_"$i".gro
 done
 </pre>
+
+<p align="center">
+Minimising every point from the same starting structure is the usual shortcut, and it is where this kind of scan goes wrong: the hydroxyl groups settle into different orientations at different angles, and the MM profile picks up steps of several tenths of a kcal/mol that the torsion term is then asked to absorb.
+</p>
 
 <p align="justify">
 These minimisations give the MM geometries, not the energies that the fit needs. What the fit needs is the energy of those same geometries with the torsion being parameterised <i>removed</i> from the force field, so that the fitted term is not asked to account for anything that the other terms already cover (see <a href="https://pubs.acs.org/doi/10.1021/acs.jpca.0c10845" target="_blank">J. Phys. Chem. A 2021, 125, 1, 519-529</a>). Deleting the 10-1-4-7 line from the <code>[ dihedrals ]</code> section and running single points on the structures just produced gives that profile, with <a href="https://arvpinto.github.io/GAFF2_dihedral_parameterization/scan_mm/single_point/min_steep_sp.mdp" target="_blank">min_steep_sp.mdp</a> (<code>nsteps = 0</code>, and no <code>define</code>, so the restraints stay off and contribute nothing to the energy):
@@ -195,11 +205,11 @@ for i in dihe_*.gro; do
    gmx mdrun -deffnm "${i%.gro}"
 done
 
-python gromacs_dihedral.py dihe_*.log --atoms 10 1 4 7 --coords . -o mm_scan.dat
+python gromacs_dihedral.py dihe_*.log -o mm_scan.dat
 </pre>
 
 <p align="justify">
-The <code>--atoms</code> option makes the script measure the dihedral on each structure instead of reading it from the file name. The two differ: a restraint with a finite force constant lets the torsion settle up to 0.8 degrees away from its target in this example, and that difference is not negligible on a profile this steep.
+The angle of each point is read from the file name, which carries the QM value, so the two profiles end up on exactly the same grid and the fit needs no interpolation. The restraint is not infinitely stiff and the minimised structure settles a fraction of a degree away from its target; <code>--atoms 10 1 4 7 --coords .</code> measures the angle on each structure instead, which is worth doing when the restraint is loose or the profile is steep, at the cost of a grid that no longer matches the QM one exactly.
 </p>
 
 <div align="center">
@@ -207,7 +217,7 @@ The <code>--atoms</code> option makes the script measure the dihedral on each st
 </div>
 
 <p align="justify">
-The gap between the two curves is the target of the fit. It is largest around -120 degrees, where the force field without its torsion term puts the barrier 1.7 kcal/mol too high.
+The gap between the two curves is the target of the fit. It is largest around -56 degrees, where the force field without its torsion term is 1.1 kcal/mol too high.
 </p>
 
 <br/>
@@ -230,13 +240,13 @@ python least_squares_fit.py --qm qm_scan.dat --mm mm_scan.dat --nmax 3 \
     --indices 10 1 4 7 --types oh c3 c3 c3 --out dihedral.itp
 
 60 points, 3 term(s), phases free
-RMSD 0.9170 kJ/mol (0.2192 kcal/mol), largest deviation 1.5664 kJ/mol
-constant offset C0 = -6.5607 kJ/mol (not a force field term)
+RMSD 0.5546 kJ/mol (0.1326 kcal/mol), largest deviation 1.1059 kJ/mol
+constant offset C0 = -5.6000 kJ/mol (not a force field term)
 
    n      K(kJ/mol)    K(kcal/mol)     delta(deg)
-   1       2.849169       0.680968        59.5246
-   2       1.301764       0.311129        10.2559
-   3       0.390548       0.093343        92.5894
+   1       2.294474       0.548392        61.2126
+   2       1.435342       0.343055        28.1296
+   3       0.247865       0.059241        -4.0432
 </pre>
 
 <p align="justify">
@@ -250,20 +260,20 @@ How many terms to use is the one real decision here. <code>--scan</code> shows w
 python least_squares_fit.py --qm qm_scan.dat --mm mm_scan.dat --scan 6
 
  nmax   RMSD(kJ/mol)    max dev
-    1         1.3283     2.5779
-    2         0.9577     1.9181
-    3         0.9170     1.5664
-    4         0.4055     1.3124
-    5         0.3501     1.2655
-    6         0.3235     1.1286
+    1         1.1698     2.3110
+    2         0.5817     1.0775
+    3         0.5546     1.1059
+    4         0.1844     0.4847
+    5         0.1781     0.4404
+    6         0.1691     0.4486
 </pre>
 
 <p align="justify">
-Three terms are used below. The fourth would halve the RMSD, but a multiplicity of 4 has no obvious physical reading for a torsion about a single bond between two tetrahedral carbons, and a term fitted to one molecule at one level of theory is being asked to work in environments it never saw. Reproducing the training profile to the last tenth of a kJ/mol is rarely what makes a torsion transferable.
+Three terms are used below. The fourth would cut the RMSD by two thirds, but a multiplicity of 4 has no obvious physical reading for a torsion about a single bond between two tetrahedral carbons, and a term fitted to one molecule at one level of theory is being asked to work in environments it never saw. Reproducing the training profile to the last tenth of a kJ/mol is rarely what makes a torsion transferable.
 </p>
 
 <p align="justify">
-A second choice worth making deliberately is whether the phases are free. <code>--phases symmetric</code> restricts them to 0 or 180 degrees, which keeps the term symmetric about &phi; = 0, as the terms of a general force field almost always are. For this torsion that constraint costs a lot, with the RMSD rising from 0.92 to 1.99 kJ/mol, because the intramolecular hydrogen bond makes the real profile asymmetric. A free phase is the right choice here, but it does encode a specific conformational preference, which is a reason to be careful about carrying the term over to a fragment where that hydrogen bond cannot form.
+A second choice worth making deliberately is whether the phases are free. <code>--phases symmetric</code> restricts them to 0 or 180 degrees, which keeps the term symmetric about &phi; = 0, as the terms of a general force field almost always are. For this torsion that constraint costs a lot, with the RMSD rising from 0.55 to 1.60 kJ/mol, because the intramolecular hydrogen bond makes the real profile asymmetric. A free phase is the right choice here, but it does encode a specific conformational preference, which is a reason to be careful about carrying the term over to a fragment where that hydrogen bond cannot form.
 </p>
 
 <p align="justify">
@@ -275,11 +285,11 @@ for i in dihe_*.gro; do
    gmx mdrun -deffnm "${i%.gro}"
 done
 
-python gromacs_dihedral.py dihe_*.log --atoms 10 1 4 7 --coords . -o mm_corrected.dat
+python gromacs_dihedral.py dihe_*.log -o mm_corrected.dat
 
 python plot_profiles.py qm_scan.dat mm_scan.dat mm_corrected.dat \
     --labels "QM" "GAFF2, scanned torsion removed" "GAFF2, fitted torsion" \
-    --rmsd-against 1 --legend-loc "upper right" -o dihedral_qm_mm_corr.png
+    --rmsd-against 1 -o dihedral_qm_mm_corr.png
 </pre>
 
 <div align="center">
@@ -287,7 +297,7 @@ python plot_profiles.py qm_scan.dat mm_scan.dat mm_corrected.dat \
 </div>
 
 <p align="justify">
-The corrected force field reproduces the QM profile with an RMSD of 0.22 kcal/mol, against 0.75 kcal/mol for the profile without the term, and the largest deviation falls from 1.7 to 0.4 kcal/mol. Both minima and the ordering of the two barriers are recovered; what is left is a slight overestimation of the barrier near -120 degrees, which is the part of the curve that three cosines cannot reach.
+The corrected force field reproduces the QM profile with an RMSD of 0.14 kcal/mol, against 0.62 kcal/mol for the profile without the term, and the largest deviation falls from 1.12 to 0.26 kcal/mol. Both minima and the ordering of the two barriers are recovered; what is left is a slight overestimation of the barrier near -120 degrees, which is the part of the curve that three cosines cannot reach.
 </p>
 
 <p align="center">
@@ -327,9 +337,9 @@ python make_parmed_input.py propanediol_system.prmtop --types oh c3 c3 c3 \
     --parmout propanediol_system_newdihe.prmtop
 
 54 dihedral(s) x 3 term(s) -> dihedrals_parmed.in
-  n=1  K=0.680968 kcal/mol  delta=59.5246 deg
-  n=2  K=0.311129 kcal/mol  delta=10.2559 deg
-  n=3  K=0.093343 kcal/mol  delta=92.5894 deg
+  n=1  K=0.548392 kcal/mol  delta=61.2126 deg
+  n=2  K=0.343055 kcal/mol  delta=28.1296 deg
+  n=3  K=0.059241 kcal/mol  delta=-4.0432 deg
 
 parmed propanediol_system.prmtop -i dihedrals_parmed.in
 </pre>
@@ -340,9 +350,9 @@ The input it writes is a list of <code>deleteDihedral</code> commands followed b
 <pre style="color: white; background-color: black;">
 deleteDihedral @10 @1 @4 @7
 ...
-addDihedral @10 @1 @4 @7 0.680968 1 59.5246 1.2 2.0
-addDihedral @10 @1 @4 @7 0.311129 2 10.2559 1.2 2.0
-addDihedral @10 @1 @4 @7 0.093343 3 92.5894 1.2 2.0
+addDihedral @10 @1 @4 @7 0.548392 1 61.2126 1.2 2.0
+addDihedral @10 @1 @4 @7 0.343055 2 28.1296 1.2 2.0
+addDihedral @10 @1 @4 @7 0.059241 3 -4.0432 1.2 2.0
 ...
 parmout propanediol_system_newdihe.prmtop
 </pre>

@@ -277,7 +277,8 @@ def make_plot(path, angles, qm, mm, target, fitted, rmsd, dpi, show):
     top.plot(a, (mm - mm.min())[order], "s--", color="#d62728", markersize=3.5,
              linewidth=1.4, label="MM, torsion removed")
     top.set_ylabel("relative energy (kJ/mol)")
-    top.legend(frameon=False)
+    top.legend(frameon=False, fontsize=9, loc="lower left",
+               bbox_to_anchor=(0.0, 1.01), borderaxespad=0.0, ncol=2)
 
     bottom.plot(a, (target - target.mean())[order], "o", color="#1f77b4",
                 markersize=3.5, label="target, QM - MM")
@@ -285,7 +286,8 @@ def make_plot(path, angles, qm, mm, target, fitted, rmsd, dpi, show):
                 linewidth=1.8, label=f"fit, RMSD = {rmsd:.2f} kJ/mol")
     bottom.set_xlabel("dihedral angle (degrees)")
     bottom.set_ylabel("energy (kJ/mol)")
-    bottom.legend(frameon=False)
+    bottom.legend(frameon=False, fontsize=9, loc="lower left",
+                  bbox_to_anchor=(0.0, 1.01), borderaxespad=0.0, ncol=2)
 
     fig.savefig(path, dpi=dpi, bbox_inches="tight", facecolor="white")
     if show:

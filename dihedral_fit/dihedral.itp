@@ -1,21 +1,21 @@
-; RMSD 0.9170 kJ/mol over 60 points
+; RMSD 0.5546 kJ/mol over 60 points
 ; proper dihedral fitted with least_squares_fit.py
 ; E = sum_n K_n * [1 + cos(n*phi - delta_n)]
 [ dihedraltypes ]
 ;   i    j    k    l  func      delta(deg)       K(kJ/mol)   n
-   oh   c3   c3   c3     9        59.52455        2.849169    1
-   oh   c3   c3   c3     9        10.25587        1.301764    2
-   oh   c3   c3   c3     9        92.58941        0.390548    3
+   oh   c3   c3   c3     9        61.21260        2.294474    1
+   oh   c3   c3   c3     9        28.12957        1.435342    2
+   oh   c3   c3   c3     9        -4.04324        0.247865    3
 
 [ dihedrals ]
 ;   ai     aj     ak     al  func      delta(deg)       K(kJ/mol)   n
-    10      1      4      7     9        59.52455        2.849169    1
-    10      1      4      7     9        10.25587        1.301764    2
-    10      1      4      7     9        92.58941        0.390548    3
+    10      1      4      7     9        61.21260        2.294474    1
+    10      1      4      7     9        28.12957        1.435342    2
+    10      1      4      7     9        -4.04324        0.247865    3
 
 
 # parmed, AMBER convention: the height is in kcal/mol
 #   addDihedral <mask1> <mask2> <mask3> <mask4> <K> <n> <delta> <scee> <scnb>
-addDihedral @10 @1 @4 @7 0.680968 1 59.5246 1.2 2.0
-addDihedral @10 @1 @4 @7 0.311129 2 10.2559 1.2 2.0
-addDihedral @10 @1 @4 @7 0.093343 3 92.5894 1.2 2.0
+addDihedral @10 @1 @4 @7 0.548392 1 61.2126 1.2 2.0
+addDihedral @10 @1 @4 @7 0.343055 2 28.1296 1.2 2.0
+addDihedral @10 @1 @4 @7 0.059241 3 -4.0432 1.2 2.0

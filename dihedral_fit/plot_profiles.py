@@ -58,8 +58,10 @@ def parse_args(argv=None):
     p.add_argument("--figsize", nargs=2, type=float, default=[7.0, 4.4],
                    metavar=("W", "H"), help="figure size in inches (default: 7.0 4.4)")
     p.add_argument("--ymax", type=float, default=None, help="upper limit of the energy axis")
-    p.add_argument("--legend-loc", default="best",
-                   help="where the legend goes, in matplotlib terms (default: %(default)s)")
+    p.add_argument("--legend-loc", default="outside",
+                   help="where the legend goes: a matplotlib location, in which case "
+                        "the energy axis is extended so that it clears the curves, or "
+                        "'outside', the default, to put it above the axes (default: %(default)s)")
     p.add_argument("--no-markers", action="store_true", help="draw lines only")
     p.add_argument("--no-show", action="store_true",
                    help="only write the file, do not open a window")
@@ -82,6 +84,28 @@ def rmsd(reference, other):
     oa, oe = other
     interpolated = np.interp(np.mod(ra, 360.0), np.mod(oa, 360.0), oe, period=360.0)
     return float(np.sqrt(np.mean((interpolated - re_) ** 2)))
+
+
+def make_room_for(fig, ax, legend, data_max, fixed_top):
+    """Raise the top of the axes until a legend drawn inside clears the curves.
+
+    The legend is laid out in points, so its height as a fraction of the axes
+    does not change when the limits do; one pass is enough.
+    """
+    if fixed_top is not None or data_max <= 0:
+        return
+    fig.canvas.draw()
+    try:
+        box = legend.get_window_extent().transformed(ax.transAxes.inverted())
+    except Exception:
+        return
+    bottom, top = ax.get_ylim()
+    free = 1.0 - box.height - 0.05           # fraction of the axes left for the data
+    if free <= 0.2:
+        return                               # legend too tall to fit inside; leave it
+    needed = bottom + (data_max - bottom) / free
+    if needed > top:
+        ax.set_ylim(bottom, needed)
 
 
 def main(argv=None):
@@ -139,8 +163,16 @@ def main(argv=None):
         title = labels[0]
     if title:
         ax.set_title(title, fontsize=11)
+
     if len(profiles) > 1:
-        ax.legend(frameon=False, fontsize=9, loc=args.legend_loc)
+        if args.legend_loc == "outside":
+            legend = ax.legend(frameon=False, fontsize=9, loc="lower left",
+                               bbox_to_anchor=(0.0, 1.01), borderaxespad=0.0)
+        else:
+            legend = ax.legend(frameon=False, fontsize=9, loc=args.legend_loc)
+            make_room_for(fig, ax, legend, max(e.max() for _a, e in profiles) * out_factor,
+                          args.ymax)
+
     for side in ("top", "right"):
         ax.spines[side].set_visible(False)
 

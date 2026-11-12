@@ -40,8 +40,8 @@ of the License, or (at your option) any later version.
 GROMACS:      gmx mdrun, version 2023.3-Ubuntu_2023.3_1ubuntu3
 Executable:   /usr/bin/gmx
 Data prefix:  /usr
-Working dir:  /tmp/mmscan/corr
-Process ID:   4138
+Working dir:  /tmp/mm2/corr
+Process ID:   1154
 Command line:
   gmx mdrun -deffnm dihe_117.516 -nt 1
 
@@ -71,8 +71,8 @@ Running on 1 node with total 2 cores, 2 processing units
 Hardware detected on host vm:
   CPU info:
     Vendor: Intel
-    Brand:  Intel(R) Xeon(R) Processor @ 2.10GHz
-    Family: 6   Model: 207   Stepping: 2
+    Brand:  Intel(R) Xeon(R) Processor @ 2.30GHz
+    Family: 6   Model: 173   Stepping: 1
     Features: aes apic avx avx2 avx512f avx512cd avx512bw avx512vl avx512bf16 avx512secondFMA clfsh cmov cx8 cx16 f16c fma hle intel lahf mmx msr nonstop_tsc pcid pclmuldq pdpe1gb popcnt pse rdrnd rdtscp rtm sha sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
     Number of AVX-512 FMA units: Cannot run AVX-512 detection - assuming 2
   Hardware topology: Full, with devices
@@ -81,14 +81,14 @@ Hardware detected on host vm:
       Package  0: [   0] [   1]
     CPU limit set by OS: -1   Recommended max number of threads: 2
     Numa nodes:
-      Node  0 (4790497280 bytes mem):   0   1
+      Node  0 (3850973184 bytes mem):   0   1
       Latency:
                0
          0  1.00
     Caches:
       L1: 49152 bytes, linesize 64 bytes, assoc. 12, shared 1 ways
       L2: 2097152 bytes, linesize 64 bytes, assoc. 16, shared 1 ways
-      L3: 272629760 bytes, linesize 64 bytes, assoc. 20, shared 2 ways
+      L3: 528482304 bytes, linesize 64 bytes, assoc. 16, shared 2 ways
     PCI devices:
       0000:00:02.0  Id: 1af4:1042  Class: 0x0180  Numa: 0
       0000:00:03.0  Id: 1af4:1042  Class: 0x0180  Numa: 0
@@ -168,7 +168,7 @@ Input Parameters:
    comm-mode                      = Linear
    nstcomm                        = 100
    bd-fric                        = 0
-   ld-seed                        = -18173201
+   ld-seed                        = 2147478975
    emtol                          = 10
    emstep                         = 0.0001
    niter                          = 20
@@ -363,7 +363,7 @@ NOTE: Thread affinity was not set.
 
 Note that activating steepest-descent energy minimization via the integrator .mdp option and the command gmx mdrun may be available in a different form in a future version of GROMACS, e.g. gmx minimize and an .mdp option.
 Initiating Steepest Descents
-Started Steepest Descents on rank 0 Thu Nov 12 10:14:29 2026
+Started Steepest Descents on rank 0 Thu Nov 12 15:21:33 2026
 
 
 Steepest Descents:
@@ -374,17 +374,17 @@ Steepest Descents:
 
    Energies (kJ/mol)
            Bond          Angle    Proper Dih.          LJ-14     Coulomb-14
-    3.36989e-01    6.11769e-01    2.75531e+01    3.89983e+00   -1.24548e+02
+    4.46602e-01    4.92488e-01    2.67292e+01    4.12140e+00   -1.24304e+02
         LJ (SR)   Coulomb (SR)      Potential Pressure (bar)
-   -7.27646e-01    9.78811e+01    5.00698e+00    2.25299e+01
+   -7.22842e-01    9.74111e+01    4.17374e+00   -1.31001e+01
 
 
 Energy minimization reached the maximum number of steps before the forces
 reached the requested precision Fmax < 10.
 
 Steepest Descents did not converge to Fmax < 10 in 1 steps.
-Potential Energy  =  5.0069809e+00
-Maximum force     =  4.4686331e+02 on atom 1
-Norm of force     =  2.2367139e+02
-Finished mdrun on rank 0 Thu Nov 12 10:14:29 2026
+Potential Energy  =  4.1737442e+00
+Maximum force     =  3.7841971e+02 on atom 10
+Norm of force     =  2.2630896e+02
+Finished mdrun on rank 0 Thu Nov 12 15:21:33 2026
 
