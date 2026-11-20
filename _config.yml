@@ -1,0 +1,46 @@
+title: Parameterization of a Dihedral Angle with QM
+description: Refit the GAFF2 parameters of a dihedral angle against a quantum mechanical torsion scan, using 1,3-propanediol as the example, and add them to the topology.
+author: Alexandre V. Pinto
+lang: en
+image: /assets/img/DIHEDRAL_ANGLE.png
+
+# Shown at the top of the page. "hero" is the image next to the title.
+# The original (assets/img/DIHEDRAL_ANGLE.png) has black axes on a transparent
+# background: dark mode uses a copy with the axes and labels in light grey
+# (src), and light mode a copy of the original cut to the same frame (src_light).
+# The topic name and colour are the ones this
+# entry has on the home page (arvpinto.github.io, _data/categories.yml).
+topic: Force fields
+topic_color: "#ff7d45"
+tools: [Gaussian, AmberTools, parmed, GROMACS]
+hero:
+  fig: dihedral           # animated figure (assets/js/card-figures.js, data in assets/data/cards/)
+  src: /assets/img/hero-fig.webp
+  src_light: /assets/img/hero-fig-light.webp
+  width: 1120
+  height: 700
+  alt: 1,3-propanediol turning about its central torsion beside the QM scan points and the GAFF2 profile refitted to them
+
+# A single page, so there is no "sections" list: the menu on the left shows the
+# parts of the page (I to IV) instead. It is not part of a series, so there are
+# no previous_entry / next_entry links either.
+
+# Home page (the menu bar links to its Portfolio and About sections) and this repository.
+home_url: https://arvpinto.github.io/
+home_label: Portfolio
+repo_url: https://github.com/arvpinto/GAFF2_dihedral_parameterization
+
+# Name and affiliation shown under the title (same lines as on the home page).
+author_degree: PhD in Chemistry
+affiliation:
+  - High Performance Computing in Molecular Modelling Research Group, LAQV-REQUIMTE
+  - Department of Chemistry and Biochemistry, Faculty of Sciences, University of Porto
+
+# Licence named in the footer (the LICENSE file of the repository).
+license:
+  name: CC0 1.0 Universal
+  url: https://github.com/arvpinto/GAFF2_dihedral_parameterization/blob/main/LICENSE
+
+# The page uses its own layout and stylesheet (no remote theme), matching the home page.
+plugins:
+  - jekyll-seo-tag
